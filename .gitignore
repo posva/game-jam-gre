@@ -1,0 +1,7 @@
+node_modules
+built.min.js
+coverage
+data/set
+data/card
+data/fonts/TrajanPro-Bold.ttf
+data/fonts/MinionPro-BoldCn.woff
