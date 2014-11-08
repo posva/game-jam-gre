@@ -7,5 +7,12 @@ requirejs.config({
     lodash: '../node_modules/lodash/lodash',
     requireLib: '../node_modules/requirejs/require',
     phaser: '../node_modules/phaser/build/phaser.min',
+    juicy: '../plugins/Juicy',
   },
+  shim: {
+    'juicy': {
+      deps: ['phaser'],
+      //exports: 'Juicy'
+    },
+  }
 });

@@ -1,11 +1,11 @@
 define(['phaser', 'selfish', 'lodash', 'player'], function(__phaser, selfish, _, Player) {
   var Base = selfish.Base;
-  function destroySelf() {
-    if (this.x >= game.world.width) {
-      return;
+  function destroySelf(me) {
+    console.log(me);
+    if (me.x < 0) {
+      console.log('destroyed');
+      this.kill();
     }
-    console.log('destroyed');
-    this.kill();
   }
   function collisionHandler(player, obstacle) {
     this.state = 'stop';
@@ -15,6 +15,7 @@ define(['phaser', 'selfish', 'lodash', 'player'], function(__phaser, selfish, _,
     initialize: function(game) {
       this.state = 'move';
       this.velocity = 200;
+      this.points = 0;
 
       this.playerState = 0;
       this.playerStates = ['liquid', 'solid', 'gaz'];
@@ -30,6 +31,7 @@ define(['phaser', 'selfish', 'lodash', 'player'], function(__phaser, selfish, _,
        this.playerGroup.enableBody = true;
        this.playerGroup.physicsBodyType = Phaser.Physics.ARCADE;
        this.player = this.playerGroup.create(96, this.playerPos.liquid, 'player');
+       this.player.anchor.set(0.5, 0.5);
        this.player.body.collideWorldBounds = true;
 
        this.obstaclesGroup = game.add.group();
@@ -48,9 +50,7 @@ define(['phaser', 'selfish', 'lodash', 'player'], function(__phaser, selfish, _,
        //game.world.setBounds(0, 33, game.world.width, game.world.height-33*2);
     },
     createObstacle: function(game) {
-      var obs = this.obstaclesGroup.create(300+ this.velocity, this.player.y, 'player');
-      obs.checkWorldBounds = true;
-      obs.events.onOutOfBounds.addOnce(destroySelf, obs);
+      var obs = this.obstaclesGroup.create(game.world.width + this.velocity, this.player.y, 'player');
       obs.body.velocity.x = -this.velocity;
     },
     movePlayer: function(game, up) {
@@ -61,8 +61,15 @@ define(['phaser', 'selfish', 'lodash', 'player'], function(__phaser, selfish, _,
       this.playerTween = game.add.tween(this.player).
         to({y: this.playerPos[this.playerStates[this.playerState]]}, 300,
            Phaser.Easing.Cubic.Out).start();
+           game.juicy.jelly(this.player, 1, 0, this.player.scale);
     },
     update: function(game) {
+      this.obstaclesGroup.forEachAlive(function(obs) {
+        if (obs.x < - (obs.width / 2 + 20)) {
+          console.log('killed');
+          obs.kill();
+        }
+      });
        game.physics.arcade.overlap(this.playerGroup, this.obstaclesGroup, collisionHandler, null, this);
        this.velocity += 0.25;
 
