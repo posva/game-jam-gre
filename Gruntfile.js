@@ -63,7 +63,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-http-server');
-  grunt.loadNpmTasks('grunt-mocha-istanbul');
 
   grunt.registerTask('default', ['jshint:sys', 'jshint:src', 'deploy']);
   grunt.registerTask('deploy', ['requirejs']);
