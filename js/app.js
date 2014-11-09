@@ -7,9 +7,17 @@ define(['phaser', 'juicy', 'tunnel'], function(__phaser, __Juicy, Tunnel) {
       game.state.add('Boot', {
         preload: function() {
            console.log('Loading!');
-           game.load.spritesheet('ninja-tiles', 'data/ninja-tiles32.png', 32, 32, 34);
+           game.load.audio('sfx-liquid', ['data/sfx-liquid.wav']);
+           game.load.audio('sfx-solid', ['data/sfx-solid.wav']);
+           game.load.audio('sfx-gaz', ['data/sfx-gaz.wav']);
            //game.load.image('player', 'data/shinyball.png');
-           game.load.spritesheet('player', 'data/liquid-solid.png', 70.5, 84, 9, 1, 2.2);
+           game.load.spritesheet('back', 'data/fond.png', 1, 440, 3);
+           game.load.spritesheet('player', 'data/liquid-solid.png', 230, 300, 10*3);
+           game.load.spritesheet('wall', 'data/wall.png', 77, 440, 2 * 3);
+           game.load.spritesheet('vacuum', 'data/vacuum.png', 65, 440, 2 * 3);
+           game.load.spritesheet('grid', 'data/grid.png', 40, 440, 2 * 3);
+           game.load.spritesheet('hole', 'data/hole.png', 163, 440, 3);
+           //game.load.spritesheet('spikes', 'data/spikes.png', 163, 440, 3);
            game.juicy = game.plugins.add(new Phaser.Plugin.Juicy(game));
            console.log('Loaded!');
         },
@@ -21,6 +29,15 @@ define(['phaser', 'juicy', 'tunnel'], function(__phaser, __Juicy, Tunnel) {
         update: function() {
           game.juicy.update();
           this.tunnel.update(this);
+        },
+        render: function() {
+          game.debug.body(this.tunnel.player);
+          this.tunnel.obstaclesGroup.forEachAlive(function(me) {
+            game.debug.body(me);
+          }, this);
+          this.tunnel.coinsGroup.forEachAlive(function(me) {
+            game.debug.body(me);
+          }, this);
         }
       });
 
