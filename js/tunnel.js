@@ -16,7 +16,7 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
   function collisionHandler(player, obs) {
     if (!obstacles.pass[obs.type][this.playerStates[this.playerState]]) {
       this.state = 'dead';
-      player.kill();
+      //player.kill();
       this.obstaclesGroup.forEachAlive(function(me) {
         me.body.velocity = 0;
       });
@@ -49,6 +49,7 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
       _.forEach(sfxtab, function(v) {
         this.sfx[v] = game.add.audio('sfx-'+v);
       }, this);
+        this.music = game.add.audio('music-cuivre');
 
       this.positions = {
         grid: game.world.height / 2,
@@ -76,14 +77,14 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
       this.playerStates = ['liquid', 'solid', 'gaz'];
       this.playerTween = {};
       this.playerPos = {
-        liquid: 250,
-        solid:  250,
-        gaz: 100
+        liquid: 200,
+        solid:  200,
+        gaz: 80
       };
       this.playerMasks = [
-        [72, 72, 74, 113],
-        [82, 164, 41, 68],
+        [50, 72, 74, 113],
         [50, 164, 41, 68],
+        [50, 72, 41, 48],
       ];
        this.level = 'cuivre';
        this.levelsName = [
@@ -105,24 +106,24 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
        this.playerGroup = game.add.group();
        this.playerGroup.enableBody = true;
        this.playerGroup.physicsBodyType = Phaser.Physics.ARCADE;
-       this.player = this.playerGroup.create(96, this.playerPos.liquid, 'player', 9 * levels.indexOf(this.level));
+       this.player = this.playerGroup.create(96, this.playerPos.liquid, 'player', 10 * levels.indexOf(this.level));
        this.player.body.setSize.apply(this.player.body, this.playerMasks[this.playerState]);
        this.player.anchor.set(0.5, 0.5);
        this.player.body.collideWorldBounds = true;
        _.forEach(levels, function(v, i) {
-         this.player.animations.add(v+'-liquid-solid', [0+ i * 9, 1+ i * 9, 2+ i * 9, 3+ i * 9, 4+ i * 9, 5+ i * 9]);
-         this.player.animations.add(v+'-solid-liquid', [0+ i * 9, 1+ i * 9, 2+ i * 9, 3+ i * 9, 4+ i * 9, 5+ i * 9].reverse());
-         this.player.animations.add(v+'-gaz-solid',    [9+ i * 9, 8 + i * 9, 7 + i * 9, 6 + i * 9, 5 + i * 9]);
-         this.player.animations.add(v+'-solid-gaz',    [9+ i * 9, 8 + i * 9, 7 + i * 9, 6 + i * 9, 5 + i * 9].reverse());
+         this.player.animations.add(v+'-liquid-solid', [0+ i * 10, 1+ i * 10, 2+ i * 10, 3+ i * 10, 4+ i * 10, 5+ i * 10]);
+         this.player.animations.add(v+'-solid-liquid', [0+ i * 10, 1+ i * 10, 2+ i * 10, 3+ i * 10, 4+ i * 10, 5+ i * 10].reverse());
+         this.player.animations.add(v+'-gaz-solid',    [9 + i * 10, 8 + i * 10, 7 + i * 10, 6 + i * 10, 5 + i * 10]);
+         this.player.animations.add(v+'-solid-gaz',    [9 + i * 10, 8 + i * 10, 7 + i * 10, 6 + i * 10, 5 + i * 10].reverse());
        }, this);
        this.framesToObstacle = 0;
 
        this.smokeEmitter = game.add.emitter(this.player.x, this.player.y);
        this.smokeEmitter.setAlpha(1, 0, 500);
-       this.smokeEmitter.makeParticles('player');
+       this.smokeEmitter.makeParticles('part');
        this.smokeEmitter.setScale(0.5, 1, 0.5, 1, 500);
        this.smokeEmitter.maxParticles = 1000;
-       this.smokeEmitter.start(false, 500, 1, 5);
+       this.smokeEmitter.start(false, 500, 1, 15);
        this.smokeEmitter.on = false;
 
        this.cursors = game.input.keyboard.createCursorKeys();
@@ -135,6 +136,8 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
        game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
        this.i = 0;
        //game.world.setBounds(0, 33, game.world.width, game.world.height-33*2);
+       this.music.play();
+       this.lastObs = null;
     },
     replay: function() {
       this.state = 'run';
@@ -155,31 +158,34 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
       } else if (this.state === 'dead') {
       }
     },
-    createCoins: function(game, n) {
+    createCoins: function(game, n, last) {
       var i, coin;
       for (i = 0; i < n; i++) {
-        coin = this.coinsGroup.create(game.world.width + this.velocity + (4 + i) * coinSize + 5, this.playerPos[this.playerStates[this.playerState]], 'coin');
+        coin = this.coinsGroup.create(game.world.width + last.width + this.velocity + (2 + i) * coinSize + 5, this.playerPos[this.playerStates[this.playerState]], 'coin');
         coin.body.velocity.x = -this.velocity;
       }
     },
     createObstacles: function(game) {
-      var tab;
+      var tab, obs;
       if (this.difficultyRange === 0) {
         tab = [
           'grid', 'grid', 'grid', 'grid',
-          //'wall', 'wall', 'wall',
+          'wall', 'wall', 'wall',
           //'ice',
           //'spikes',
-          //'hole', 'hole', 'hole',
-          //'vacuum', 'vacuum', 'vacuum',
+          'hole', 'hole', 'hole',
+          'vacuum', 'vacuum', 'vacuum',
         ];
         wh = tab[Math.floor(Math.random() * tab.length)];
-        var obs = obstacles[wh](game, this);
+        obs = obstacles[wh](game, this);
+        this.lastObs = obs;
         this.obsLeft--;
       }
-      var dist = (this.framesToObstacle / 64) * (this.velocity + this.velocityGain) ;
+      var dist = (this.framesToObstacle / 64) * (this.velocity + this.velocityGain) - this.lastObs.width ;
       var n = dist / (coinSize + 5);
-      this.createCoins(game, n);
+      if (this.lastObs) {
+        this.createCoins(game, n, this.lastObs);
+      }
     },
     movePlayer: function(game, up) {
       if (this.state !== 'run' || this.playerTween.isRunning || (up && this.playerState === 2) || (!up && this.playerState === 0)) {
@@ -200,23 +206,24 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
     update: function(game) {
       this.obstaclesGroup.forEachAlive(function(obs) {
         obs.body.velocity.x = -this.velocity;
-        if (obs.x < - (obs.width / 2 + 20)) {
+        if (obs.x < - (obs.width + 20)) {
           console.log('killed');
           obs.kill();
         }
       }, this);
       this.coinsGroup.forEachAlive(function(obs) {
         obs.body.velocity.x = -this.velocity;
-        if (obs.x < - (obs.width / 2 + 20)) {
+        if (obs.x < - (obs.width + 20)) {
           console.log('coin killed');
           obs.kill();
         }
       }, this);
       if (this.playerState === 2 || (this.playerState === 1 && this.playerTween.isRunning && this.player.y < this.playerPos.solid)) {
         this.smokeEmitter.x = this.player.x;
-        this.smokeEmitter.y = this.player.y;
+        this.smokeEmitter.y = this.player.y+25;
+        this.smokeEmitter.maxParticleSpeed.x = -this.velocity;
         this.smokeEmitter.area.setTo(this.player.x - this.player.body.width,
-                                     this.player.y - this.player.body.height,
+                                     this.player.y - this.player.body.height*3,
                                      this.player.body.width,
                                      this.player.body.height
                                     );
@@ -229,7 +236,7 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
       }
       if (this.state === 'run') {
         this.framesToObstacle--;
-        if (this.obsLeft > 0 && this.framesToObstacle <= 0) {
+        if (/*this.obsLeft > 0 && */this.framesToObstacle <= 0) {
           this.framesToObstacle = this.danger[this.difficultyRange] - this.difficulty / 200;
           this.createObstacles(game);
         }

@@ -10,13 +10,18 @@ define(['phaser', 'juicy', 'tunnel'], function(__phaser, __Juicy, Tunnel) {
            game.load.audio('sfx-liquid', ['data/sfx-liquid.wav']);
            game.load.audio('sfx-solid', ['data/sfx-solid.wav']);
            game.load.audio('sfx-gaz', ['data/sfx-gaz.wav']);
+           game.load.audio('music-cuivre', ['data/mu_hydrogen_level_1.wav']);
            //game.load.image('player', 'data/shinyball.png');
+           game.load.image('coin', 'data/coin.png');
+           game.load.image('part', 'data/cuivre-gaz-particule.png');
            game.load.spritesheet('back', 'data/fond.png', 1, 440, 3);
+           //game.load.spritesheet('ice-part', 'data/ice-part.png', 40, 137, 5);
            game.load.spritesheet('player', 'data/liquid-solid.png', 230, 300, 10*3);
            game.load.spritesheet('wall', 'data/wall.png', 77, 440, 2 * 3);
            game.load.spritesheet('vacuum', 'data/vacuum.png', 65, 440, 2 * 3);
            game.load.spritesheet('grid', 'data/grid.png', 40, 440, 2 * 3);
-           game.load.spritesheet('hole', 'data/hole.png', 163, 440, 3);
+           game.load.spritesheet('ice', 'data/ice.png', 298, 440, 2 * 3);
+           game.load.spritesheet('hole', 'data/hole.png', 263, 440, 3);
            //game.load.spritesheet('spikes', 'data/spikes.png', 163, 440, 3);
            game.juicy = game.plugins.add(new Phaser.Plugin.Juicy(game));
            console.log('Loaded!');
@@ -30,7 +35,7 @@ define(['phaser', 'juicy', 'tunnel'], function(__phaser, __Juicy, Tunnel) {
           game.juicy.update();
           this.tunnel.update(this);
         },
-        render: function() {
+        irender: function() {
           game.debug.body(this.tunnel.player);
           this.tunnel.obstaclesGroup.forEachAlive(function(me) {
             game.debug.body(me);

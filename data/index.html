@@ -1,0 +1,155 @@
+<html>
+<head>
+    <title>Hydrogen</title>
+    <meta charset="utf-8">
+	<link rel="icon" type="image/png" href="data/favicon16.png" />
+    <style type="text/css">
+        body {
+            background: url('data/motif_hydrogen_transparent.svg') repeat center center #333;
+            margin: 0px;
+            overflow: hidden;
+            -webkit-animation:fondMotif 800ms linear infinite;
+        }
+        
+        @-webkit-keyframes fondMotif {
+	        0% {
+		        background-position:0 0;
+	        }
+	        100% {
+		        background-position:-67px 0;
+	        }
+        }
+        
+        body.cuivre 	{ background-color:#DB7639; }
+        body.fer 		{ background-color:#8E8E8E; }
+        
+        #container {
+            width: 880px;
+            height:440px;
+            top:50%;
+            left:50%;
+            margin-top: -230px;
+            margin-left: -450px;
+            position: absolute;
+            border:solid 10px white;
+        }
+        
+        #container:after {
+	        content:"";
+	        display:block;
+	        position:absolute;
+	        width:125px;
+	        height:125px;
+	        background:url(data/logo_ongame.png) no-repeat center center;
+	        top:-72px;
+	        left:-75px;
+	        z-index:100000
+        }
+        
+        #menu {
+	        position:absolute;
+	        background:url(data/menu.png) no-repeat 80px 90px white;
+	        width:100%;
+	        height:100%;
+	        top:0;
+	        left:0;
+	        border:solid 10px black;
+	        box-sizing: border-box;
+	        cursor:pointer;
+	        -webkit-transition:all 300ms ease
+        }
+        
+        #blobby {
+	        background:url(data/menu.gif) no-repeat center center transparent;
+	        width:125px;
+	        height:200px;
+	        position:absolute;
+	        top:30px;
+	        right:35px;
+	        z-index:100000;
+	        -webkit-transition:all 300ms ease;
+	        -webkit-animation:blobby 3600ms ease-in-out infinite
+        }
+        
+        @-webkit-keyframes blobby {
+	        0%, 100% {
+		        -webkit-transform:translateY(0);
+	        }
+	         50% {
+		        -webkit-transform:translateY(-50px);
+	        }
+        }
+        
+        #gotoabout {
+	        width:100px;
+	        height:40px;
+	        z-index:100000000;
+	        position:absolute;
+	        left:480px;
+	        top:122px;
+	        box-sizing: border-box;
+        }
+        
+        #gotoplay {
+	        position:absolute;
+	        top:200px;
+	        left:80px;
+	        width:600px;
+	        height:150px;
+	        background:transparent;
+	        box-sizing: border-box;
+	        z-index:100000
+        }
+        
+        #about {
+	        width:860px;
+	        height:420px;
+	        background:url(data/about.png) no-repeat center center white;
+	        opacity:0;
+	        -webkit-transition:all 300ms ease;
+	        box-sizing: border-box;
+        }
+        
+        #closeabout {
+	        position:absolute;
+	        top:20px;
+	        left:20px;
+	        width:40px;
+	        height:40px;
+        }
+    </style>
+</head>
+<body class="cuivre">
+    <div id="container">
+	    	<div id="menu">
+		    	<div id="gotoplay"></div>
+		    	<div id="gotoabout"></div>
+		    	<div id="about">
+			    	<div id="closeabout"></div>
+		    	</div>
+		    	
+		    	<div id="blobby"></div>
+	    	</div>
+    </div>
+    <script src="node_modules/requirejs/require.js"></script>
+    <script>
+      require(['require-config.js'], function(){
+        require(['main'])
+      });
+    </script>
+    <script>
+	    
+	document.getElementById('gotoplay').addEventListener('click', function(){ document.getElementById('menu').style.opacity = 0; }); 
+	document.getElementById('closeabout').addEventListener('click', function(){ document.getElementById('about').style.opacity = 0; }); 
+	   
+	document.getElementById('gotoabout').addEventListener('click', function(){ 
+		if (document.getElementById('about').style.opacity == 0) {
+			document.getElementById('about').style.opacity = 1;
+		} else {
+			document.getElementById('about').style.opacity = 0;
+		}
+	});    
+	    
+	</script>
+</body>
+</html>

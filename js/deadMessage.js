@@ -10,9 +10,11 @@ define(['phaser', 'lodash'], function(__phaser, _) {
       score: 48,
     };
     this.box = game.add.sprite(game.world.width / 2, -300, 'msgBox');
+    this.box.kill();
     this.button = game.add.button(game.world.width / 2, -200, 'button', tunnel.replay, tunnel, 2, 1, 0);
+    this.button.kill();
 
-    this.score = game.add.text(game.world.width / 2, this.positons.out + this.offsets.score, '123328278366127');
+    this.score = game.add.text(game.world.width / 2, this.positons.out + this.offsets.score, 'You lost!');
     this.score.align = 'center';
     this.score.anchor.set(0.5);
     this.score.font = 'Arial Black';

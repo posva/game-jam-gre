@@ -9,16 +9,16 @@ define(['phaser', 'selfish', 'lodash'], function(__phaser, selfish, _) {
     ice: null,
   };
   var  masks = {
-    grid: [100, 100, 0, 0],
+    grid: [21, 440, 9, 0],
     wall: [
-      [10, 50, 0, 0],
-      [10, 50, 0, 0],
+      [65, 160, 6, 231],
+      [65, 153, 6, 77],
     ],
     vacuum: [
-      [10, 50, 0, 0],
-      [10, 50, 0, 0],
+      [65, 100, 0, 320],
+      [65, 100, 0, 20],
     ],
-    hole: [10, 50, 0, 0],
+    hole: [200, 100, 16, 320],
     spikes: [10, 50, 0, 0],
     ice: [10, 50, 0, 0],
   };
@@ -27,9 +27,9 @@ define(['phaser', 'selfish', 'lodash'], function(__phaser, selfish, _) {
   _.forOwn(obstacle, function(v, k) {
     obstacle[k] = function(game, tunnel) {
       var x = game.world.width + tunnel.velocity;
-      var y, frame;
+      var y, frame, pos;
       if (hl.indexOf(k) > -1) {
-        var pos = Math.floor(Math.random()*2);
+        pos = Math.floor(Math.random()*2);
         y = tunnel.positions[k][pos];
         frame = 0 + pos;
       } else {
@@ -41,12 +41,18 @@ define(['phaser', 'selfish', 'lodash'], function(__phaser, selfish, _) {
       obs.type = k;
       obs.body.velocity.x = -tunnel.velocity;
       // XXX call me
-      //obs.body.setSize.apply(obs.body, masks[k]);
+      if (hl.indexOf(k) > -1) {
+        obs.body.setSize.apply(obs.body, masks[k][pos]);
+      } else {
+        obs.body.setSize.apply(obs.body, masks[k]);
+      }
+      var realObs = obs;
       if (k === 'grid') {
         obs = tunnel.obstaclesGroup.create(x, 0, k, frame+1);
         obs.type = k;
         obs.body.velocity.x = -tunnel.velocity;
       }
+      return obs;
     };
   });
 
