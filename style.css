@@ -110,6 +110,14 @@ body.fer {
   box-sizing: border-box;
 }
 
+#loading {
+  position: absolute;
+  left: 400px;
+  bottom: 40px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
 #closeabout {
   position:absolute;
   top:20px;

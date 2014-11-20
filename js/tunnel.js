@@ -197,9 +197,10 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
       //XXX call me
       this.player.body.setSize.apply(this.player.body, this.playerMasks[this.playerState]);
       var newState = this.playerStates[this.playerState];
-      this.player.play(this.level+'-'+oldState+'-'+newState, 22.22);
+      var factor = this.velocity / 1000 + 1;
+      this.player.play(this.level+'-'+oldState+'-'+newState, 22.22/factor);
       this.playerTween = game.add.tween(this.player).
-        to({y: this.playerPos[this.playerStates[this.playerState]]}, 300,
+        to({y: this.playerPos[this.playerStates[this.playerState]]}, 300/factor,
            Phaser.Easing.Cubic.Out).start();
            game.juicy.jelly(this.player, 0.45);
     },

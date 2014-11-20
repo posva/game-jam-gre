@@ -6,12 +6,13 @@ define(['phaser', 'juicy', 'tunnel', 'lodash'], function(__phaser, __Juicy, Tunn
       window.game = game;
       game.state.add('Boot', {
         preload: function() {
-           console.log('Loading!');
-           var rw = 300, rh = 44;
-           var loadBack = game.add.graphics(game.width/2 - rw/2, game.height/2 - rh/2);
-           //loadBack.drawTriangles([
-             //new
-           //]);
+           var loadingSpan = document.getElementById('loading');
+           game.load.onFileComplete.add(function(perc) {
+             loadingSpan.textContent = perc+'%';
+             if (perc === 100) {
+               document.getElementById('menu').style.opacity = 0;
+             }
+           });
 
            var files = {
              'sfx-liquid': [
@@ -79,6 +80,7 @@ define(['phaser', 'juicy', 'tunnel', 'lodash'], function(__phaser, __Juicy, Tunn
                frameMax: 3
              },
            };
+
            _.forOwn(files, function(v, k) {
              var loader;
              if (typeof v === 'string') {
@@ -95,34 +97,12 @@ define(['phaser', 'juicy', 'tunnel', 'lodash'], function(__phaser, __Juicy, Tunn
 
                v = [k, v.url, v.frameWidth, v.frameHeight, v.frameMax, v.margin, v.spacing];
              }
-             console.log('Loading '+k);
              loader.apply(game.load, v);
            });
-           //game.load.audio('sfx-liquid', ['data/sfx-liquid.wav']);
-           //console.log(1);
-           //game.load.audio('sfx-solid', ['data/sfx/sfx-solid.wav']);
-           //console.log(2);
-           //game.load.audio('sfx-gaz', ['data/sfx/sfx-gaz.wav']);
-           //console.log(3);
-           //game.load.audio('music-cuivre', ['data/music/mu_hydrogen_level_1.wav']);
-           //console.log(4);
-           //game.load.image('coin', 'data/coin.png');
-           //game.load.image('part', 'data/cuivre-gaz-particule.png');
-           //game.load.spritesheet('back', 'data/fond.png', 1, 440, 3);
-           //game.load.spritesheet('player', 'data/liquid-solid.png', 230, 300, 10*3);
-           //game.load.spritesheet('wall', 'data/wall.png', 77, 440, 2 * 3);
-           //game.load.spritesheet('vacuum', 'data/vacuum.png', 65, 440, 2 * 3);
-           //game.load.spritesheet('grid', 'data/grid.png', 40, 440, 2 * 3);
-           //game.load.spritesheet('ice', 'data/ice.png', 298, 440, 2 * 3);
-           //game.load.spritesheet('hole', 'data/hole.png', 263, 440, 3);
-           //game.load.spritesheet('spikes', 'data/spikes.png', 163, 440, 3);
-           //game.load.spritesheet('ice-part', 'data/ice-part.png', 40, 137, 5);
+
            game.juicy = game.plugins.add(new Phaser.Plugin.Juicy(game));
-           console.log('Loaded!');
         },
         create: function() {
-          //game.physics.startSystem(Phaser.Physics.NINJA);
-          //game.physics.startSystem(Phaser.Physics.P2JS);
           this.tunnel = Tunnel.new(game);
           this.debug = true;
         },
