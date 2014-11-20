@@ -35,46 +35,46 @@ define(['phaser', 'juicy', 'tunnel', 'lodash'], function(__phaser, __Juicy, Tunn
                'data/music/mu_hydrogen_level_1.mp3',
                'data/music/mu_hydrogen_level_1.wav'
              ],
-             'coin': 'data/coin.png',
-             'part': 'data/cuivre-gaz-particule.png',
+             'coin': 'data/img/coin.png',
+             'part': 'data/img/gaz-particule.png',
              'back': {
-               url: 'data/fond.png',
+               url: 'data/img/fond.png',
                frameWidth: 1,
                frameHeight: 440,
                frameMax: 3,
              },
              'player': {
-               url: 'data/liquid-solid.png',
+               url: 'data/img/liquid-solid.png',
                frameWidth: 230,
                frameHeight: 300,
                frameMax: 10*3,
              },
              'wall': {
-               url: 'data/wall.png',
+               url: 'data/img/wall.png',
                frameWidth: 77,
                frameHeight: 440,
                frameMax: 2 * 3
              },
              'vacuum': {
-               url: 'data/vacuum.png',
+               url: 'data/img/vacuum.png',
                frameWidth: 65,
                frameHeight: 440,
                frameMax: 2 * 3
              },
              'grid': {
-               url: 'data/grid.png',
+               url: 'data/img/grid.png',
                frameWidth: 40,
                frameHeight: 440,
                frameMax: 2 * 3
              },
              'ice': {
-               url: 'data/ice.png',
+               url: 'data/img/ice.png',
                frameWidth: 298,
                frameHeight: 440,
                frameMax: 2 * 3
              },
              'hole': {
-               url: 'data/hole.png',
+               url: 'data/img/hole.png',
                frameWidth: 263,
                frameHeight: 440,
                frameMax: 3
