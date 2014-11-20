@@ -7,6 +7,7 @@ module.exports = function(grunt) {
         options: {
           mainConfigFile: "require-config.js",
           include: "requireLib",
+          preserveLicenseComments: false,
           name: "main",
           out: "built.min.js",
           done: function(done, output) {

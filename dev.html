@@ -17,14 +17,24 @@
       <div id="blobby">
       </div>
       <div id="loading">
+        Loading...
       </div>
     </div>
   </div>
-  <script src="built.min.js"></script>
+  <script src="node_modules/requirejs/require.js"></script>
+  <script>
+require(['require-config.js'], function(){
+  require(['main']);
+});
+  </script>
   <script>
 
-document.getElementById('gotoplay').addEventListener('click', function(){ document.getElementById('menu').style.opacity = 0; });
-document.getElementById('closeabout').addEventListener('click', function(){ document.getElementById('about').style.opacity = 0; });
+document.getElementById('gotoplay').addEventListener('click', function(){
+  document.getElementById('menu').style.opacity = 0;
+});
+document.getElementById('closeabout').addEventListener('click', function(){
+  document.getElementById('about').style.opacity = 0;
+});
 
 document.getElementById('gotoabout').addEventListener('click', function(){
   if (document.getElementById('about').style.opacity == 0) {
