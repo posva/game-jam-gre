@@ -104,6 +104,7 @@ define(['phaser', 'juicy', 'tunnel', 'lodash'], function(__phaser, __Juicy, Tunn
         },
         create: function() {
           this.tunnel = Tunnel.new(game);
+          window.tunnel = this.tunnel;
           this.debug = true;
         },
         update: function() {

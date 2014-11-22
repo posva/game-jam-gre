@@ -15,8 +15,8 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
   }
   function collisionHandler(player, obs) {
     if (!obstacles.pass[obs.type][this.playerStates[this.playerState]]) {
-      this.state = 'dead';
       //player.kill();
+      this.state = 'dead';
       this.obstaclesGroup.forEachAlive(function(me) {
         me.body.velocity = 0;
       });
@@ -49,7 +49,7 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
       _.forEach(sfxtab, function(v) {
         this.sfx[v] = game.add.audio('sfx-'+v);
       }, this);
-        this.music = game.add.audio('music-cuivre');
+      this.music = game.add.audio('music-cuivre');
 
       this.positions = {
         grid: game.world.height / 2,
@@ -132,11 +132,17 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
        up.onDown.add(this.movePlayer.bind(this, game, true));
        var down = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
        down.onDown.add(this.movePlayer.bind(this, game, false));
+       game.input.onHold.add((function() {
+         var pointer = game.input.activePointer;
+         if (Phaser.Point.distance(pointer.position, pointer.positionDown) > 150 && pointer.duration > 100 && pointer.duration < 250) {
+           this.movePlayer(game, pointer.position. y < pointer.positionDown.y);
+         }
+       }).bind(this));
 
        game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
        this.i = 0;
        //game.world.setBounds(0, 33, game.world.width, game.world.height-33*2);
-       this.music.play();
+       //this.music.play();
        this.lastObs = null;
     },
     replay: function() {
@@ -198,7 +204,7 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
       this.player.body.setSize.apply(this.player.body, this.playerMasks[this.playerState]);
       var newState = this.playerStates[this.playerState];
       var factor = this.velocity / 1000 + 1;
-      this.player.play(this.level+'-'+oldState+'-'+newState, 22.22/factor);
+      this.player.play(this.level+'-'+oldState+'-'+newState, 22.22*factor);
       this.playerTween = game.add.tween(this.player).
         to({y: this.playerPos[this.playerStates[this.playerState]]}, 300/factor,
            Phaser.Easing.Cubic.Out).start();
@@ -208,14 +214,14 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
       this.obstaclesGroup.forEachAlive(function(obs) {
         obs.body.velocity.x = -this.velocity;
         if (obs.x < - (obs.width + 20)) {
-          console.log('killed');
+          //console.log('killed');
           obs.kill();
         }
       }, this);
       this.coinsGroup.forEachAlive(function(obs) {
         obs.body.velocity.x = -this.velocity;
         if (obs.x < - (obs.width + 20)) {
-          console.log('coin killed');
+          //console.log('coin killed');
           obs.kill();
         }
       }, this);
