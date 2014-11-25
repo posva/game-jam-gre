@@ -81,6 +81,11 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
         solid:  200,
         gaz: 80
       };
+      this.coinPos = {
+        liquid: 280,
+        solid:  230,
+        gaz: 110
+      };
       this.playerMasks = [
         [50, 72, 74, 113],
         [50, 164, 41, 68],
@@ -164,24 +169,44 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
       } else if (this.state === 'dead') {
       }
     },
-    createCoins: function(game, n, last) {
+    createCoins: function(game, n, last, pos) {
       var i, coin;
+      var factor = this.velocity / 1000 + 1;
+      function tweening(coin) {
+        game.add.tween(coin).
+          to({y: pos+16}, 600/factor,
+             Phaser.Easing.Sinusoidal.InOut, true, 0, Number.MAX_VALUE, true);
+      }
       for (i = 0; i < n; i++) {
-        coin = this.coinsGroup.create(game.world.width + last.width + this.velocity + (2 + i) * coinSize + 5, this.playerPos[this.playerStates[this.playerState]], 'coin');
+        coin = this.coinsGroup.create(game.world.width + last.width + this.velocity + (2 + i) * coinSize + 5, pos, 'coin');
         coin.body.velocity.x = -this.velocity;
+        setTimeout(tweening.bind(this, coin), i * 50);
       }
     },
     createObstacles: function(game) {
-      var tab, obs;
+      var tab, obs, probs, actualPos;
+      actualPos = this.playerStates[this.playerState];
       if (this.difficultyRange === 0) {
-        tab = [
-          'grid', 'grid', 'grid', 'grid',
-          'wall', 'wall', 'wall',
-          //'ice',
-          //'spikes',
-          'hole', 'hole', 'hole',
-          'vacuum', 'vacuum', 'vacuum',
-        ];
+        probs = {
+          grid: 4,
+          wall: 6,
+          hole: 2,
+          vacuum: 4,
+        };
+        tab = [];
+        _.forOwn(probs, function(v, k) {
+          var i;
+          if (!obstacles.pass[k][actualPos]) { // player can die to this, get up the chances!
+            // TODO modulo level 1, 2 or 3
+            probs[k] *= 4;
+            v = probs[k];
+          }
+          for (i = 0; i < v; i++) {
+            tab.push(k);
+          }
+        }, this);
+        console.log(actualPos);
+        console.log(probs);
         wh = tab[Math.floor(Math.random() * tab.length)];
         obs = obstacles[wh](game, this);
         this.lastObs = obs;
@@ -190,7 +215,15 @@ define(['phaser', 'selfish', 'lodash', 'player', 'deadMessage', 'obstacle'], fun
       var dist = (this.framesToObstacle / 64) * (this.velocity + this.velocityGain) - this.lastObs.width ;
       var n = dist / (coinSize + 5);
       if (this.lastObs) {
-        this.createCoins(game, n, this.lastObs);
+        var pos;
+        tab = [];
+        _.forOwn(this.coinPos, function(v, k) {
+          if (k !== actualPos) {
+            tab.push(k);
+          }
+        }, this);
+        pos = this.coinPos[tab[Math.floor(Math.random() * tab.length)]];
+        this.createCoins(game, n, this.lastObs, pos);
       }
     },
     movePlayer: function(game, up) {
